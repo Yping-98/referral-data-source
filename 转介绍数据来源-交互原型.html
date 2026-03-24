@@ -1,0 +1,587 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>电销CRM - 转介绍数据来源</title>
+<style>
+:root {
+    --sidebar-bg: #001529;
+    --sidebar-width: 220px;
+    --primary-blue: #1890ff;
+    --bg-gray: #f0f2f5;
+    --header-height: 50px;
+    --success: #52c41a;
+    --warning: #faad14;
+    --danger: #ff4d4f;
+}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', sans-serif; background: var(--bg-gray); color: #333; font-size: 14px; }
+
+.app { display: flex; min-height: 100vh; }
+
+/* Sidebar */
+.sidebar { width: var(--sidebar-width); background: var(--sidebar-bg); color: #fff; flex-shrink: 0; display: flex; flex-direction: column; }
+.sidebar-logo { padding: 16px 20px; font-size: 16px; font-weight: 600; border-bottom: 1px solid rgba(255,255,255,0.08); display: flex; align-items: center; gap: 10px; height: var(--header-height); }
+.sidebar-logo .icon { width: 28px; height: 28px; background: var(--primary-blue); border-radius: 6px; display: flex; align-items: center; justify-content: center; font-size: 16px; }
+.menu-group { padding: 8px 0; }
+.menu-group-title { padding: 8px 20px; font-size: 12px; color: rgba(255,255,255,0.35); letter-spacing: 1px; }
+.menu-item { padding: 10px 20px 10px 28px; cursor: pointer; display: flex; align-items: center; gap: 10px; transition: all 0.2s; color: rgba(255,255,255,0.65); font-size: 14px; }
+.menu-item:hover { background: rgba(255,255,255,0.06); color: #fff; }
+.menu-item.active { background: var(--primary-blue); color: #fff; }
+.menu-item .dot { width: 6px; height: 6px; border-radius: 50%; background: currentColor; opacity: 0.5; }
+
+/* Main */
+.main { flex: 1; display: flex; flex-direction: column; min-width: 0; }
+.header { height: var(--header-height); background: #fff; border-bottom: 1px solid #e8e8e8; display: flex; align-items: center; padding: 0 24px; justify-content: space-between; }
+.breadcrumb { font-size: 14px; color: #999; }
+.breadcrumb span { color: #333; font-weight: 500; }
+.header-right { display: flex; align-items: center; gap: 16px; }
+.avatar { width: 32px; height: 32px; border-radius: 50%; background: var(--primary-blue); color: #fff; display: flex; align-items: center; justify-content: center; font-size: 14px; }
+
+.content { flex: 1; padding: 20px 24px; overflow-y: auto; }
+
+.page-title { font-size: 18px; font-weight: 600; margin-bottom: 16px; }
+
+/* Card */
+.card { background: #fff; border-radius: 6px; box-shadow: 0 1px 3px rgba(0,0,0,0.06); padding: 20px; margin-bottom: 16px; }
+
+/* Filter Area */
+.filter-area { display: flex; flex-wrap: wrap; gap: 12px; align-items: flex-end; }
+.filter-item { display: flex; flex-direction: column; gap: 4px; }
+.filter-item label { font-size: 13px; color: #666; }
+.filter-input { padding: 7px 11px; border: 1px solid #d9d9d9; border-radius: 4px; font-size: 14px; outline: none; transition: border-color 0.2s; background: #fff; }
+.filter-input:focus { border-color: var(--primary-blue); box-shadow: 0 0 0 2px rgba(24,144,255,0.2); }
+.filter-input::placeholder { color: #bfbfbf; }
+.filter-select { padding: 7px 11px; border: 1px solid #d9d9d9; border-radius: 4px; font-size: 14px; outline: none; background: #fff; cursor: pointer; min-width: 130px; appearance: auto; }
+.filter-select:focus { border-color: var(--primary-blue); box-shadow: 0 0 0 2px rgba(24,144,255,0.2); }
+.filter-time { width: 195px; }
+.filter-phone { width: 170px; }
+.filter-actions { display: flex; gap: 8px; align-items: flex-end; padding-bottom: 1px; }
+
+/* Agent search dropdown */
+.agent-search-wrapper { position: relative; }
+.agent-search-input { width: 170px; }
+.agent-dropdown { display: none; position: absolute; top: 100%; left: 0; right: 0; background: #fff; border: 1px solid #d9d9d9; border-radius: 4px; box-shadow: 0 3px 12px rgba(0,0,0,0.12); z-index: 100; max-height: 200px; overflow-y: auto; margin-top: 4px; }
+.agent-dropdown.show { display: block; }
+.agent-option { padding: 8px 12px; cursor: pointer; font-size: 14px; transition: background 0.15s; }
+.agent-option:hover { background: #e6f7ff; }
+.agent-option.selected { background: #e6f7ff; color: var(--primary-blue); font-weight: 500; }
+.agent-no-data { padding: 16px 12px; text-align: center; color: #bfbfbf; font-size: 13px; }
+
+/* Buttons */
+.btn { padding: 7px 15px; border-radius: 4px; border: 1px solid transparent; cursor: pointer; font-size: 14px; transition: all 0.2s; display: inline-flex; align-items: center; gap: 6px; line-height: 1.5; }
+.btn-primary { background: var(--primary-blue); color: #fff; border-color: var(--primary-blue); }
+.btn-primary:hover { background: #40a9ff; border-color: #40a9ff; }
+.btn-default { background: #fff; color: #333; border-color: #d9d9d9; }
+.btn-default:hover { color: var(--primary-blue); border-color: var(--primary-blue); }
+
+/* Table */
+.table-wrapper { overflow-x: auto; margin-top: 4px; }
+table { width: 100%; border-collapse: collapse; }
+table th { background: #fafafa; padding: 12px 16px; text-align: left; font-weight: 500; color: #666; border-bottom: 1px solid #e8e8e8; white-space: nowrap; font-size: 13px; position: sticky; top: 0; z-index: 1; }
+table th.sortable { cursor: pointer; user-select: none; }
+table th.sortable:hover { background: #f0f0f0; }
+table th .sort-icon { margin-left: 4px; font-size: 10px; color: #bfbfbf; }
+table th .sort-icon.active { color: var(--primary-blue); }
+table td { padding: 12px 16px; border-bottom: 1px solid #f0f0f0; white-space: nowrap; font-size: 13px; }
+table tr:hover td { background: #f5f8fd; }
+
+/* Tags */
+.tag { display: inline-block; padding: 1px 8px; border-radius: 4px; font-size: 12px; line-height: 20px; }
+.tag-blue { background: #e6f7ff; color: #1890ff; border: 1px solid #91d5ff; }
+.tag-green { background: #f6ffed; color: #52c41a; border: 1px solid #b7eb8f; }
+.tag-orange { background: #fff7e6; color: #fa8c16; border: 1px solid #ffd591; }
+
+/* Phone mask with tooltip */
+.phone-cell { position: relative; cursor: default; }
+.phone-cell .phone-tooltip { display: none; position: absolute; bottom: calc(100% + 6px); left: 50%; transform: translateX(-50%); background: rgba(0,0,0,0.75); color: #fff; padding: 4px 10px; border-radius: 4px; font-size: 12px; white-space: nowrap; z-index: 50; }
+.phone-cell .phone-tooltip::after { content: ''; position: absolute; top: 100%; left: 50%; transform: translateX(-50%); border: 5px solid transparent; border-top-color: rgba(0,0,0,0.75); }
+.phone-cell:hover .phone-tooltip { display: block; }
+
+/* Pagination */
+.pagination { display: flex; justify-content: space-between; align-items: center; margin-top: 16px; font-size: 13px; color: #666; }
+.pagination-left { display: flex; align-items: center; gap: 8px; }
+.pagination-right { display: flex; align-items: center; gap: 6px; }
+.page-btn { min-width: 32px; height: 32px; border: 1px solid #d9d9d9; border-radius: 4px; display: flex; align-items: center; justify-content: center; cursor: pointer; background: #fff; font-size: 13px; padding: 0 6px; transition: all 0.2s; }
+.page-btn:hover { color: var(--primary-blue); border-color: var(--primary-blue); }
+.page-btn.active { border-color: var(--primary-blue); color: var(--primary-blue); font-weight: 500; }
+.page-btn.disabled { color: #d9d9d9; cursor: not-allowed; border-color: #d9d9d9; }
+.page-size-select { padding: 4px 8px; border: 1px solid #d9d9d9; border-radius: 4px; font-size: 13px; outline: none; cursor: pointer; }
+
+/* Empty state */
+.empty-state { padding: 60px 0; text-align: center; color: #bfbfbf; }
+.empty-state .empty-icon { font-size: 48px; margin-bottom: 12px; opacity: 0.5; }
+.empty-state .empty-text { font-size: 14px; }
+
+/* Toast */
+.toast { display: none; position: fixed; top: 60px; left: 50%; transform: translateX(-50%); padding: 10px 24px; border-radius: 4px; font-size: 14px; z-index: 9999; box-shadow: 0 4px 12px rgba(0,0,0,0.15); }
+.toast.show { display: block; animation: toastIn 0.3s ease; }
+.toast-error { background: #fff2f0; color: #ff4d4f; border: 1px solid #ffccc7; }
+.toast-success { background: #f6ffed; color: #52c41a; border: 1px solid #b7eb8f; }
+
+@keyframes toastIn {
+    from { opacity: 0; transform: translateX(-50%) translateY(-10px); }
+    to { opacity: 1; transform: translateX(-50%) translateY(0); }
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .sidebar { display: none; }
+    .filter-area { flex-direction: column; }
+    .filter-item { width: 100%; }
+    .filter-input, .filter-select { width: 100%; }
+}
+</style>
+</head>
+<body>
+
+<div class="app">
+    <!-- Sidebar -->
+    <div class="sidebar">
+        <div class="sidebar-logo">
+            <div class="icon">📞</div>
+            <span>电销CRM</span>
+        </div>
+        <div class="menu-group">
+            <div class="menu-group-title">客户管理</div>
+            <div class="menu-item" onclick="navigateTo('referralClue')">
+                <span class="dot"></span>转介绍线索
+            </div>
+            <div class="menu-item active" onclick="navigateTo('referralSource')">
+                <span class="dot"></span>转介绍数据来源
+            </div>
+        </div>
+        <div class="menu-group">
+            <div class="menu-group-title">活动管理</div>
+            <div class="menu-item" onclick="navigateTo('ruleList')">
+                <span class="dot"></span>活码分配规则
+            </div>
+        </div>
+        <div class="menu-group">
+            <div class="menu-group-title">数据统计</div>
+            <div class="menu-item" onclick="navigateTo('stats')">
+                <span class="dot"></span>企微数据
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main">
+        <div class="header">
+            <div class="breadcrumb">客户管理 / <span>转介绍数据来源</span></div>
+            <div class="header-right">
+                <span style="font-size:13px;color:#999;">运营管理员</span>
+                <div class="avatar">管</div>
+            </div>
+        </div>
+
+        <div class="content">
+            <div class="page-title">转介绍数据来源</div>
+
+            <!-- Filter Card -->
+            <div class="card">
+                <div class="filter-area">
+                    <div class="filter-item">
+                        <label>客户手机号</label>
+                        <input type="text" class="filter-input filter-phone" id="customerPhone" placeholder="请输入客户手机号" maxlength="11" oninput="this.value=this.value.replace(/\D/g,'')">
+                    </div>
+                    <div class="filter-item">
+                        <label>新客户手机号</label>
+                        <input type="text" class="filter-input filter-phone" id="newCustomerPhone" placeholder="请输入新客户手机号" maxlength="11" oninput="this.value=this.value.replace(/\D/g,'')">
+                    </div>
+                    <div class="filter-item">
+                        <label>开始时间</label>
+                        <input type="datetime-local" class="filter-input filter-time" id="startTime" step="1">
+                    </div>
+                    <div class="filter-item">
+                        <label>结束时间</label>
+                        <input type="datetime-local" class="filter-input filter-time" id="endTime" step="1">
+                    </div>
+                    <div class="filter-item">
+                        <label>业务线</label>
+                        <select class="filter-select" id="businessLine">
+                            <option value="">全部</option>
+                            <option value="电销">电销</option>
+                            <option value="体验营">体验营</option>
+                        </select>
+                    </div>
+                    <div class="filter-item">
+                        <label>归属坐席</label>
+                        <div class="agent-search-wrapper">
+                            <input type="text" class="filter-input agent-search-input" id="agentSearch" placeholder="请输入坐席姓名搜索" autocomplete="off">
+                            <div class="agent-dropdown" id="agentDropdown"></div>
+                        </div>
+                    </div>
+                    <div class="filter-item">
+                        <label>来源</label>
+                        <select class="filter-select" id="sourceType">
+                            <option value="">全部</option>
+                            <option value="海报">海报</option>
+                            <option value="小程序">小程序</option>
+                        </select>
+                    </div>
+                    <div class="filter-actions">
+                        <button class="btn btn-primary" onclick="handleSearch()">查询</button>
+                        <button class="btn btn-default" onclick="handleReset()">重置</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Data Table Card -->
+            <div class="card" style="padding-bottom:12px;">
+                <div class="table-wrapper">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th style="width:100px;">业务线</th>
+                                <th style="width:150px;">客户手机号</th>
+                                <th style="width:150px;">新客户手机号</th>
+                                <th class="sortable" style="width:180px;" onclick="toggleSort()">
+                                    绑定时间
+                                    <span class="sort-icon active" id="sortIcon">↓</span>
+                                </th>
+                                <th style="width:120px;">归属坐席</th>
+                                <th style="width:120px;">介绍人</th>
+                                <th style="width:100px;">来源</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tableBody"></tbody>
+                    </table>
+                </div>
+                <div id="emptyState" class="empty-state" style="display:none;">
+                    <div class="empty-icon">📭</div>
+                    <div class="empty-text">暂无数据</div>
+                </div>
+                <div class="pagination" id="pagination">
+                    <div class="pagination-left">
+                        <span id="totalInfo">共 0 条数据</span>
+                        <select class="page-size-select" id="pageSizeSelect" onchange="changePageSize()">
+                            <option value="10">10 条/页</option>
+                            <option value="20" selected>20 条/页</option>
+                            <option value="50">50 条/页</option>
+                            <option value="100">100 条/页</option>
+                        </select>
+                    </div>
+                    <div class="pagination-right" id="paginationBtns"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Toast -->
+<div class="toast" id="toast"></div>
+
+<script>
+const MOCK_AGENTS = [
+    { agentId: 1, agentName: '张三' },
+    { agentId: 2, agentName: '李四' },
+    { agentId: 3, agentName: '王五' },
+    { agentId: 4, agentName: '赵六' },
+    { agentId: 5, agentName: '孙七' },
+    { agentId: 6, agentName: '周八' },
+    { agentId: 7, agentName: '吴九' },
+    { agentId: 8, agentName: '郑十' },
+    { agentId: 9, agentName: '张晓琳' },
+    { agentId: 10, agentName: '李明远' },
+    { agentId: 11, agentName: '张伟' },
+    { agentId: 12, agentName: '王丽丽' },
+];
+
+const MOCK_DATA = [];
+(function generateMockData() {
+    const bizLines = ['电销', '体验营'];
+    const sources = ['海报', '小程序'];
+    const referrers = ['刘妈妈', '陈爸爸', '王家长', '赵同学', '孙同学', '周家长', '吴妈妈', '郑爸爸', '钱家长', '李妈妈', '杨同学', '黄妈妈', '林爸爸', '何家长', '马同学'];
+    const phones = [];
+    for (let i = 0; i < 86; i++) {
+        const p = '1' + (Math.floor(Math.random() * 9) + 1) + String(Math.floor(Math.random() * 100000000)).padStart(9, '0');
+        phones.push(p.slice(0, 11));
+    }
+    for (let i = 0; i < 86; i++) {
+        const d = new Date(2026, 0, 1 + Math.floor(Math.random() * 82), Math.floor(Math.random() * 24), Math.floor(Math.random() * 60), Math.floor(Math.random() * 60));
+        MOCK_DATA.push({
+            businessLine: bizLines[Math.floor(Math.random() * bizLines.length)],
+            customerPhone: phones[i],
+            newCustomerPhone: phones[(i + 30) % phones.length],
+            bindTime: formatDate(d),
+            agentName: MOCK_AGENTS[Math.floor(Math.random() * MOCK_AGENTS.length)].agentName,
+            referrerName: referrers[Math.floor(Math.random() * referrers.length)],
+            source: sources[Math.floor(Math.random() * sources.length)],
+            _ts: d.getTime()
+        });
+    }
+    MOCK_DATA.sort((a, b) => b._ts - a._ts);
+})();
+
+let state = {
+    pageNum: 1,
+    pageSize: 20,
+    sortOrder: 'desc',
+    selectedAgentId: null,
+    selectedAgentName: '',
+    filteredData: [...MOCK_DATA]
+};
+
+function formatDate(d) {
+    const pad = n => String(n).padStart(2, '0');
+    return d.getFullYear() + '-' + pad(d.getMonth()+1) + '-' + pad(d.getDate()) + ' ' + pad(d.getHours()) + ':' + pad(d.getMinutes()) + ':' + pad(d.getSeconds());
+}
+
+function maskPhone(phone) {
+    if (!phone || phone.length < 7) return phone;
+    return phone.slice(0, 3) + '****' + phone.slice(7);
+}
+
+function showToast(msg, type) {
+    const toast = document.getElementById('toast');
+    toast.textContent = msg;
+    toast.className = 'toast show toast-' + (type || 'error');
+    setTimeout(() => { toast.className = 'toast'; }, 2500);
+}
+
+function handleSearch() {
+    const customerPhone = document.getElementById('customerPhone').value.trim();
+    const newCustomerPhone = document.getElementById('newCustomerPhone').value.trim();
+    const startTime = document.getElementById('startTime').value;
+    const endTime = document.getElementById('endTime').value;
+    const businessLine = document.getElementById('businessLine').value;
+    const sourceType = document.getElementById('sourceType').value;
+
+    if (startTime && endTime && new Date(startTime) > new Date(endTime)) {
+        showToast('结束时间不能早于开始时间', 'error');
+        return;
+    }
+
+    let data = [...MOCK_DATA];
+
+    if (customerPhone) {
+        data = data.filter(d => d.customerPhone === customerPhone);
+    }
+    if (newCustomerPhone) {
+        data = data.filter(d => d.newCustomerPhone === newCustomerPhone);
+    }
+    if (startTime) {
+        const st = new Date(startTime).getTime();
+        data = data.filter(d => d._ts >= st);
+    }
+    if (endTime) {
+        const et = new Date(endTime).getTime();
+        data = data.filter(d => d._ts <= et);
+    }
+    if (businessLine) {
+        data = data.filter(d => d.businessLine === businessLine);
+    }
+    if (state.selectedAgentName) {
+        data = data.filter(d => d.agentName === state.selectedAgentName);
+    }
+    if (sourceType) {
+        data = data.filter(d => d.source === sourceType);
+    }
+
+    if (state.sortOrder === 'asc') {
+        data.sort((a, b) => a._ts - b._ts);
+    } else {
+        data.sort((a, b) => b._ts - a._ts);
+    }
+
+    state.filteredData = data;
+    state.pageNum = 1;
+    renderTable();
+}
+
+function handleReset() {
+    document.getElementById('customerPhone').value = '';
+    document.getElementById('newCustomerPhone').value = '';
+    document.getElementById('startTime').value = '';
+    document.getElementById('endTime').value = '';
+    document.getElementById('businessLine').value = '';
+    document.getElementById('agentSearch').value = '';
+    document.getElementById('sourceType').value = '';
+    state.selectedAgentId = null;
+    state.selectedAgentName = '';
+    state.sortOrder = 'desc';
+    document.getElementById('sortIcon').textContent = '↓';
+    state.filteredData = [...MOCK_DATA];
+    state.filteredData.sort((a, b) => b._ts - a._ts);
+    state.pageNum = 1;
+    renderTable();
+    showToast('已重置筛选条件', 'success');
+}
+
+function toggleSort() {
+    state.sortOrder = state.sortOrder === 'desc' ? 'asc' : 'desc';
+    const icon = document.getElementById('sortIcon');
+    icon.textContent = state.sortOrder === 'desc' ? '↓' : '↑';
+    if (state.sortOrder === 'asc') {
+        state.filteredData.sort((a, b) => a._ts - b._ts);
+    } else {
+        state.filteredData.sort((a, b) => b._ts - a._ts);
+    }
+    state.pageNum = 1;
+    renderTable();
+}
+
+function renderTable() {
+    const tbody = document.getElementById('tableBody');
+    const emptyState = document.getElementById('emptyState');
+    const pagination = document.getElementById('pagination');
+    const data = state.filteredData;
+    const total = data.length;
+    const start = (state.pageNum - 1) * state.pageSize;
+    const end = Math.min(start + state.pageSize, total);
+    const pageData = data.slice(start, end);
+
+    if (total === 0) {
+        tbody.innerHTML = '';
+        emptyState.style.display = 'block';
+        pagination.style.display = 'none';
+        return;
+    }
+
+    emptyState.style.display = 'none';
+    pagination.style.display = 'flex';
+
+    let html = '';
+    pageData.forEach(row => {
+        const sourceTag = row.source === '海报'
+            ? '<span class="tag tag-blue">海报</span>'
+            : '<span class="tag tag-green">小程序</span>';
+        const bizTag = row.businessLine === '电销'
+            ? '<span class="tag tag-orange">电销</span>'
+            : '<span class="tag tag-blue">体验营</span>';
+        html += `<tr>
+            <td>${bizTag}</td>
+            <td class="phone-cell">${maskPhone(row.customerPhone)}<span class="phone-tooltip">${row.customerPhone}</span></td>
+            <td class="phone-cell">${maskPhone(row.newCustomerPhone)}<span class="phone-tooltip">${row.newCustomerPhone}</span></td>
+            <td>${row.bindTime}</td>
+            <td>${row.agentName}</td>
+            <td>${row.referrerName || '—'}</td>
+            <td>${sourceTag}</td>
+        </tr>`;
+    });
+    tbody.innerHTML = html;
+
+    document.getElementById('totalInfo').textContent = '共 ' + total + ' 条数据';
+    renderPagination(total);
+}
+
+function renderPagination(total) {
+    const totalPages = Math.ceil(total / state.pageSize) || 1;
+    const container = document.getElementById('paginationBtns');
+    let html = '';
+
+    html += `<div class="page-btn ${state.pageNum <= 1 ? 'disabled' : ''}" onclick="${state.pageNum > 1 ? 'goPage(' + (state.pageNum - 1) + ')' : ''}">‹</div>`;
+
+    const maxVisible = 5;
+    let startPage = Math.max(1, state.pageNum - Math.floor(maxVisible / 2));
+    let endPage = Math.min(totalPages, startPage + maxVisible - 1);
+    if (endPage - startPage < maxVisible - 1) {
+        startPage = Math.max(1, endPage - maxVisible + 1);
+    }
+
+    if (startPage > 1) {
+        html += `<div class="page-btn" onclick="goPage(1)">1</div>`;
+        if (startPage > 2) html += `<span style="padding:0 4px;color:#bfbfbf;">...</span>`;
+    }
+
+    for (let i = startPage; i <= endPage; i++) {
+        html += `<div class="page-btn ${i === state.pageNum ? 'active' : ''}" onclick="goPage(${i})">${i}</div>`;
+    }
+
+    if (endPage < totalPages) {
+        if (endPage < totalPages - 1) html += `<span style="padding:0 4px;color:#bfbfbf;">...</span>`;
+        html += `<div class="page-btn" onclick="goPage(${totalPages})">${totalPages}</div>`;
+    }
+
+    html += `<div class="page-btn ${state.pageNum >= totalPages ? 'disabled' : ''}" onclick="${state.pageNum < totalPages ? 'goPage(' + (state.pageNum + 1) + ')' : ''}">›</div>`;
+
+    container.innerHTML = html;
+}
+
+function goPage(n) {
+    state.pageNum = n;
+    renderTable();
+}
+
+function changePageSize() {
+    state.pageSize = parseInt(document.getElementById('pageSizeSelect').value);
+    state.pageNum = 1;
+    renderTable();
+}
+
+// Agent fuzzy search
+let agentSearchTimer = null;
+const agentInput = document.getElementById('agentSearch');
+const agentDropdown = document.getElementById('agentDropdown');
+
+agentInput.addEventListener('input', function() {
+    clearTimeout(agentSearchTimer);
+    const keyword = this.value.trim();
+    state.selectedAgentId = null;
+    state.selectedAgentName = '';
+
+    if (keyword.length < 2) {
+        agentDropdown.classList.remove('show');
+        return;
+    }
+
+    agentSearchTimer = setTimeout(() => {
+        const results = MOCK_AGENTS.filter(a => a.agentName.includes(keyword));
+        if (results.length === 0) {
+            agentDropdown.innerHTML = '<div class="agent-no-data">未找到匹配的坐席</div>';
+        } else {
+            agentDropdown.innerHTML = results.map(a =>
+                `<div class="agent-option" data-id="${a.agentId}" data-name="${a.agentName}" onclick="selectAgent(${a.agentId}, '${a.agentName}')">${a.agentName}</div>`
+            ).join('');
+        }
+        agentDropdown.classList.add('show');
+    }, 300);
+});
+
+agentInput.addEventListener('focus', function() {
+    if (this.value.trim().length >= 2) {
+        agentDropdown.classList.add('show');
+    }
+});
+
+document.addEventListener('click', function(e) {
+    if (!e.target.closest('.agent-search-wrapper')) {
+        agentDropdown.classList.remove('show');
+    }
+});
+
+function selectAgent(id, name) {
+    state.selectedAgentId = id;
+    state.selectedAgentName = name;
+    agentInput.value = name;
+    agentDropdown.classList.remove('show');
+}
+
+function navigateTo(page) {
+    document.querySelectorAll('.menu-item').forEach(m => m.classList.remove('active'));
+    const breadcrumb = document.querySelector('.breadcrumb');
+    if (page === 'referralSource') {
+        document.querySelectorAll('.menu-item')[1].classList.add('active');
+        breadcrumb.innerHTML = '客户管理 / <span>转介绍数据来源</span>';
+    } else if (page === 'referralClue') {
+        document.querySelectorAll('.menu-item')[0].classList.add('active');
+        breadcrumb.innerHTML = '客户管理 / <span>转介绍线索</span>';
+        showToast('转介绍线索页面（当前原型仅展示转介绍数据来源）', 'success');
+    } else if (page === 'ruleList') {
+        document.querySelectorAll('.menu-item')[2].classList.add('active');
+        breadcrumb.innerHTML = '活动管理 / <span>活码分配规则</span>';
+        showToast('活码分配规则页面（当前原型仅展示转介绍数据来源）', 'success');
+    } else if (page === 'stats') {
+        document.querySelectorAll('.menu-item')[3].classList.add('active');
+        breadcrumb.innerHTML = '数据统计 / <span>企微数据</span>';
+        showToast('企微数据页面（当前原型仅展示转介绍数据来源）', 'success');
+    }
+}
+
+renderTable();
+</script>
+
+</body>
+</html>
