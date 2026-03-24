@@ -72,7 +72,7 @@ flowchart TD
 
 ## 六、可交互原型
 
-在线预览：[点击查看可交互原型](placeholder)
+在线预览：[点击查看可交互原型](https://yping-98.github.io/referral-data-source/%E8%BD%AC%E4%BB%8B%E7%BB%8D%E6%95%B0%E6%8D%AE%E6%9D%A5%E6%BA%90-%E4%BA%A4%E4%BA%92%E5%8E%9F%E5%9E%8B.html)
 
 > 原型为可交互 HTML 页面，点击链接即可在浏览器中体验完整交互流程。
 
