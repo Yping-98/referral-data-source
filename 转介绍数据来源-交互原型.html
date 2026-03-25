@@ -98,11 +98,6 @@ table tr:hover td { background: #f5f8fd; }
 .source-link { color: var(--primary-blue); text-decoration: none; word-break: break-all; white-space: nowrap; }
 .source-link:hover { text-decoration: underline; color: #40a9ff; }
 
-/* Phone mask with tooltip */
-.phone-cell { position: relative; cursor: default; }
-.phone-cell .phone-tooltip { display: none; position: absolute; bottom: calc(100% + 6px); left: 50%; transform: translateX(-50%); background: rgba(0,0,0,0.75); color: #fff; padding: 4px 10px; border-radius: 4px; font-size: 12px; white-space: nowrap; z-index: 50; }
-.phone-cell .phone-tooltip::after { content: ''; position: absolute; top: 100%; left: 50%; transform: translateX(-50%); border: 5px solid transparent; border-top-color: rgba(0,0,0,0.75); }
-.phone-cell:hover .phone-tooltip { display: block; }
 
 /* Pagination */
 .pagination { display: flex; justify-content: space-between; align-items: center; margin-top: 16px; font-size: 13px; color: #666; }
@@ -196,11 +191,11 @@ table tr:hover td { background: #f5f8fd; }
                         <input type="text" class="filter-input filter-phone" id="newCustomerPhone" placeholder="请输入新客户手机号" maxlength="11" oninput="this.value=this.value.replace(/\D/g,'')">
                     </div>
                     <div class="filter-item">
-                        <label>开始时间</label>
+                        <label>绑定时间（起）</label>
                         <input type="datetime-local" class="filter-input filter-time" id="startTime" step="1">
                     </div>
                     <div class="filter-item">
-                        <label>结束时间</label>
+                        <label>绑定时间（止）</label>
                         <input type="datetime-local" class="filter-input filter-time" id="endTime" step="1">
                     </div>
                     <div class="filter-item">
@@ -217,10 +212,6 @@ table tr:hover td { background: #f5f8fd; }
                             <input type="text" class="filter-input agent-search-input" id="agentSearch" placeholder="请输入坐席姓名搜索" autocomplete="off">
                             <div class="agent-dropdown" id="agentDropdown"></div>
                         </div>
-                    </div>
-                    <div class="filter-item">
-                        <label>来源</label>
-                        <input type="text" class="filter-input" id="sourceKeyword" placeholder="请输入来源链接关键字" style="width:200px;">
                     </div>
                     <div class="filter-actions">
                         <button class="btn btn-primary" onclick="handleSearch()">查询</button>
@@ -290,22 +281,28 @@ const MOCK_AGENTS = [
     { agentId: 12, agentName: '王丽丽' },
 ];
 
+const FOLLOW_ID_MAP = {
+    'F10001': '张三', 'F10002': '李四', 'F10003': '王五', 'F10004': '赵六',
+    'F10005': '孙七', 'F10006': '周八', 'F10007': '吴九', 'F10008': '郑十',
+    'F10009': '张晓琳', 'F10010': '李明远', 'F10011': '张伟', 'F10012': '王丽丽'
+};
+const FOLLOW_IDS = Object.keys(FOLLOW_ID_MAP);
+
 const MOCK_DATA = [];
 (function generateMockData() {
     const bizLines = ['电销', '体验营'];
-    const sourceUrls = [
-        'https://m.yangcong345.com/referral/poster?campaign=spring2026&uid=',
-        'https://m.yangcong345.com/referral/miniapp?channel=share&from=',
-        'https://m.yangcong345.com/activity/invite?poster_id=P20260301&ref=',
-        'https://m.yangcong345.com/wxapp/pages/referral/index?scene=',
-        'https://m.yangcong345.com/referral/poster?campaign=math_challenge&uid=',
-        'https://m.yangcong345.com/wxapp/pages/share/invite?from=miniprogram&code=',
-        'https://m.yangcong345.com/activity/recommend?poster=winter_sale&ref=',
-        'https://m.yangcong345.com/referral/h5?channel=wechat_moments&uid=',
-        'https://m.yangcong345.com/wxapp/pages/referral/scan?qr=',
-        'https://m.yangcong345.com/referral/poster?campaign=new_year&source=pyq&uid='
+    const urlPatterns = [
+        'https://m.yangcong345.com/referral/poster?campaign=spring2026&followID=',
+        'https://m.yangcong345.com/referral/miniapp?channel=share&followID=',
+        'https://m.yangcong345.com/activity/invite?poster_id=P20260301&followID=',
+        'https://m.yangcong345.com/wxapp/pages/referral/index?scene=1001&followID=',
+        'https://m.yangcong345.com/referral/poster?campaign=math_challenge&followID=',
+        'https://m.yangcong345.com/wxapp/pages/share/invite?from=miniprogram&followID=',
+        'https://m.yangcong345.com/activity/recommend?poster=winter_sale&followID=',
+        'https://m.yangcong345.com/referral/h5?channel=wechat_moments&followID=',
+        'https://m.yangcong345.com/wxapp/pages/referral/scan?qr=abc123&followID=',
+        'https://m.yangcong345.com/referral/poster?campaign=new_year&source=pyq&followID='
     ];
-    const referrers = ['刘妈妈', '陈爸爸', '王家长', '赵同学', '孙同学', '周家长', '吴妈妈', '郑爸爸', '钱家长', '李妈妈', '杨同学', '黄妈妈', '林爸爸', '何家长', '马同学'];
     const phones = [];
     for (let i = 0; i < 86; i++) {
         const p = '1' + (Math.floor(Math.random() * 9) + 1) + String(Math.floor(Math.random() * 100000000)).padStart(9, '0');
@@ -313,15 +310,17 @@ const MOCK_DATA = [];
     }
     for (let i = 0; i < 86; i++) {
         const d = new Date(2026, 0, 1 + Math.floor(Math.random() * 82), Math.floor(Math.random() * 24), Math.floor(Math.random() * 60), Math.floor(Math.random() * 60));
-        const urlBase = sourceUrls[Math.floor(Math.random() * sourceUrls.length)];
+        const urlBase = urlPatterns[Math.floor(Math.random() * urlPatterns.length)];
+        const followId = FOLLOW_IDS[Math.floor(Math.random() * FOLLOW_IDS.length)];
         MOCK_DATA.push({
             businessLine: bizLines[Math.floor(Math.random() * bizLines.length)],
             customerPhone: phones[i],
             newCustomerPhone: phones[(i + 30) % phones.length],
             bindTime: formatDate(d),
             agentName: MOCK_AGENTS[Math.floor(Math.random() * MOCK_AGENTS.length)].agentName,
-            referrerName: referrers[Math.floor(Math.random() * referrers.length)],
-            sourceUrl: urlBase + Math.floor(Math.random() * 900000 + 100000),
+            followId: followId,
+            referrerName: FOLLOW_ID_MAP[followId],
+            sourceUrl: urlBase + followId,
             _ts: d.getTime()
         });
     }
@@ -342,11 +341,6 @@ function formatDate(d) {
     return d.getFullYear() + '-' + pad(d.getMonth()+1) + '-' + pad(d.getDate()) + ' ' + pad(d.getHours()) + ':' + pad(d.getMinutes()) + ':' + pad(d.getSeconds());
 }
 
-function maskPhone(phone) {
-    if (!phone || phone.length < 7) return phone;
-    return phone.slice(0, 3) + '****' + phone.slice(7);
-}
-
 function showToast(msg, type) {
     const toast = document.getElementById('toast');
     toast.textContent = msg;
@@ -360,7 +354,6 @@ function handleSearch() {
     const startTime = document.getElementById('startTime').value;
     const endTime = document.getElementById('endTime').value;
     const businessLine = document.getElementById('businessLine').value;
-    const sourceKeyword = document.getElementById('sourceKeyword').value.trim();
 
     if (startTime && endTime && new Date(startTime) > new Date(endTime)) {
         showToast('结束时间不能早于开始时间', 'error');
@@ -389,10 +382,6 @@ function handleSearch() {
     if (state.selectedAgentName) {
         data = data.filter(d => d.agentName === state.selectedAgentName);
     }
-    if (sourceKeyword) {
-        data = data.filter(d => d.sourceUrl.toLowerCase().includes(sourceKeyword.toLowerCase()));
-    }
-
     if (state.sortOrder === 'asc') {
         data.sort((a, b) => a._ts - b._ts);
     } else {
@@ -411,7 +400,6 @@ function handleReset() {
     document.getElementById('endTime').value = '';
     document.getElementById('businessLine').value = '';
     document.getElementById('agentSearch').value = '';
-    document.getElementById('sourceKeyword').value = '';
     state.selectedAgentId = null;
     state.selectedAgentName = '';
     state.sortOrder = 'desc';
@@ -464,8 +452,8 @@ function renderTable() {
         const truncUrl = row.sourceUrl.length > 40 ? row.sourceUrl.slice(0, 40) + '...' : row.sourceUrl;
         html += `<tr>
             <td>${bizTag}</td>
-            <td class="phone-cell">${maskPhone(row.customerPhone)}<span class="phone-tooltip">${row.customerPhone}</span></td>
-            <td class="phone-cell">${maskPhone(row.newCustomerPhone)}<span class="phone-tooltip">${row.newCustomerPhone}</span></td>
+            <td>${row.customerPhone}</td>
+            <td>${row.newCustomerPhone}</td>
             <td>${row.bindTime}</td>
             <td>${row.agentName}</td>
             <td>${row.referrerName || '—'}</td>
