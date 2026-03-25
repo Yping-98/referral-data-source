@@ -93,6 +93,11 @@ table tr:hover td { background: #f5f8fd; }
 .tag-green { background: #f6ffed; color: #52c41a; border: 1px solid #b7eb8f; }
 .tag-orange { background: #fff7e6; color: #fa8c16; border: 1px solid #ffd591; }
 
+/* Source link */
+.source-cell { max-width: 300px; }
+.source-link { color: var(--primary-blue); text-decoration: none; word-break: break-all; white-space: nowrap; }
+.source-link:hover { text-decoration: underline; color: #40a9ff; }
+
 /* Phone mask with tooltip */
 .phone-cell { position: relative; cursor: default; }
 .phone-cell .phone-tooltip { display: none; position: absolute; bottom: calc(100% + 6px); left: 50%; transform: translateX(-50%); background: rgba(0,0,0,0.75); color: #fff; padding: 4px 10px; border-radius: 4px; font-size: 12px; white-space: nowrap; z-index: 50; }
@@ -215,11 +220,7 @@ table tr:hover td { background: #f5f8fd; }
                     </div>
                     <div class="filter-item">
                         <label>来源</label>
-                        <select class="filter-select" id="sourceType">
-                            <option value="">全部</option>
-                            <option value="海报">海报</option>
-                            <option value="小程序">小程序</option>
-                        </select>
+                        <input type="text" class="filter-input" id="sourceKeyword" placeholder="请输入来源链接关键字" style="width:200px;">
                     </div>
                     <div class="filter-actions">
                         <button class="btn btn-primary" onclick="handleSearch()">查询</button>
@@ -243,7 +244,7 @@ table tr:hover td { background: #f5f8fd; }
                                 </th>
                                 <th style="width:120px;">归属坐席</th>
                                 <th style="width:120px;">介绍人</th>
-                                <th style="width:100px;">来源</th>
+                                <th style="min-width:260px;">来源</th>
                             </tr>
                         </thead>
                         <tbody id="tableBody"></tbody>
@@ -292,7 +293,18 @@ const MOCK_AGENTS = [
 const MOCK_DATA = [];
 (function generateMockData() {
     const bizLines = ['电销', '体验营'];
-    const sources = ['海报', '小程序'];
+    const sourceUrls = [
+        'https://m.yangcong345.com/referral/poster?campaign=spring2026&uid=',
+        'https://m.yangcong345.com/referral/miniapp?channel=share&from=',
+        'https://m.yangcong345.com/activity/invite?poster_id=P20260301&ref=',
+        'https://m.yangcong345.com/wxapp/pages/referral/index?scene=',
+        'https://m.yangcong345.com/referral/poster?campaign=math_challenge&uid=',
+        'https://m.yangcong345.com/wxapp/pages/share/invite?from=miniprogram&code=',
+        'https://m.yangcong345.com/activity/recommend?poster=winter_sale&ref=',
+        'https://m.yangcong345.com/referral/h5?channel=wechat_moments&uid=',
+        'https://m.yangcong345.com/wxapp/pages/referral/scan?qr=',
+        'https://m.yangcong345.com/referral/poster?campaign=new_year&source=pyq&uid='
+    ];
     const referrers = ['刘妈妈', '陈爸爸', '王家长', '赵同学', '孙同学', '周家长', '吴妈妈', '郑爸爸', '钱家长', '李妈妈', '杨同学', '黄妈妈', '林爸爸', '何家长', '马同学'];
     const phones = [];
     for (let i = 0; i < 86; i++) {
@@ -301,6 +313,7 @@ const MOCK_DATA = [];
     }
     for (let i = 0; i < 86; i++) {
         const d = new Date(2026, 0, 1 + Math.floor(Math.random() * 82), Math.floor(Math.random() * 24), Math.floor(Math.random() * 60), Math.floor(Math.random() * 60));
+        const urlBase = sourceUrls[Math.floor(Math.random() * sourceUrls.length)];
         MOCK_DATA.push({
             businessLine: bizLines[Math.floor(Math.random() * bizLines.length)],
             customerPhone: phones[i],
@@ -308,7 +321,7 @@ const MOCK_DATA = [];
             bindTime: formatDate(d),
             agentName: MOCK_AGENTS[Math.floor(Math.random() * MOCK_AGENTS.length)].agentName,
             referrerName: referrers[Math.floor(Math.random() * referrers.length)],
-            source: sources[Math.floor(Math.random() * sources.length)],
+            sourceUrl: urlBase + Math.floor(Math.random() * 900000 + 100000),
             _ts: d.getTime()
         });
     }
@@ -347,7 +360,7 @@ function handleSearch() {
     const startTime = document.getElementById('startTime').value;
     const endTime = document.getElementById('endTime').value;
     const businessLine = document.getElementById('businessLine').value;
-    const sourceType = document.getElementById('sourceType').value;
+    const sourceKeyword = document.getElementById('sourceKeyword').value.trim();
 
     if (startTime && endTime && new Date(startTime) > new Date(endTime)) {
         showToast('结束时间不能早于开始时间', 'error');
@@ -376,8 +389,8 @@ function handleSearch() {
     if (state.selectedAgentName) {
         data = data.filter(d => d.agentName === state.selectedAgentName);
     }
-    if (sourceType) {
-        data = data.filter(d => d.source === sourceType);
+    if (sourceKeyword) {
+        data = data.filter(d => d.sourceUrl.toLowerCase().includes(sourceKeyword.toLowerCase()));
     }
 
     if (state.sortOrder === 'asc') {
@@ -398,7 +411,7 @@ function handleReset() {
     document.getElementById('endTime').value = '';
     document.getElementById('businessLine').value = '';
     document.getElementById('agentSearch').value = '';
-    document.getElementById('sourceType').value = '';
+    document.getElementById('sourceKeyword').value = '';
     state.selectedAgentId = null;
     state.selectedAgentName = '';
     state.sortOrder = 'desc';
@@ -445,12 +458,10 @@ function renderTable() {
 
     let html = '';
     pageData.forEach(row => {
-        const sourceTag = row.source === '海报'
-            ? '<span class="tag tag-blue">海报</span>'
-            : '<span class="tag tag-green">小程序</span>';
         const bizTag = row.businessLine === '电销'
             ? '<span class="tag tag-orange">电销</span>'
             : '<span class="tag tag-blue">体验营</span>';
+        const truncUrl = row.sourceUrl.length > 40 ? row.sourceUrl.slice(0, 40) + '...' : row.sourceUrl;
         html += `<tr>
             <td>${bizTag}</td>
             <td class="phone-cell">${maskPhone(row.customerPhone)}<span class="phone-tooltip">${row.customerPhone}</span></td>
@@ -458,7 +469,7 @@ function renderTable() {
             <td>${row.bindTime}</td>
             <td>${row.agentName}</td>
             <td>${row.referrerName || '—'}</td>
-            <td>${sourceTag}</td>
+            <td class="source-cell"><a href="${row.sourceUrl}" target="_blank" class="source-link" title="${row.sourceUrl}">${truncUrl}</a></td>
         </tr>`;
     });
     tbody.innerHTML = html;
