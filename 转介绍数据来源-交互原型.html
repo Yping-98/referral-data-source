@@ -20,7 +20,6 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC'
 
 .app { display: flex; min-height: 100vh; }
 
-/* Sidebar */
 .sidebar { width: var(--sidebar-width); background: var(--sidebar-bg); color: #fff; flex-shrink: 0; display: flex; flex-direction: column; }
 .sidebar-logo { padding: 16px 20px; font-size: 16px; font-weight: 600; border-bottom: 1px solid rgba(255,255,255,0.08); display: flex; align-items: center; gap: 10px; height: var(--header-height); }
 .sidebar-logo .icon { width: 28px; height: 28px; background: var(--primary-blue); border-radius: 6px; display: flex; align-items: center; justify-content: center; font-size: 16px; }
@@ -31,7 +30,6 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC'
 .menu-item.active { background: var(--primary-blue); color: #fff; }
 .menu-item .dot { width: 6px; height: 6px; border-radius: 50%; background: currentColor; opacity: 0.5; }
 
-/* Main */
 .main { flex: 1; display: flex; flex-direction: column; min-width: 0; }
 .header { height: var(--header-height); background: #fff; border-bottom: 1px solid #e8e8e8; display: flex; align-items: center; padding: 0 24px; justify-content: space-between; }
 .breadcrumb { font-size: 14px; color: #999; }
@@ -40,11 +38,18 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC'
 .avatar { width: 32px; height: 32px; border-radius: 50%; background: var(--primary-blue); color: #fff; display: flex; align-items: center; justify-content: center; font-size: 14px; }
 
 .content { flex: 1; padding: 20px 24px; overflow-y: auto; }
-
 .page-title { font-size: 18px; font-weight: 600; margin-bottom: 16px; }
-
-/* Card */
 .card { background: #fff; border-radius: 6px; box-shadow: 0 1px 3px rgba(0,0,0,0.06); padding: 20px; margin-bottom: 16px; }
+
+/* Top-level Tabs */
+.top-tabs { display: flex; border-bottom: 2px solid #e8e8e8; margin-bottom: 16px; }
+.top-tab { padding: 10px 24px; cursor: pointer; font-size: 15px; color: #666; position: relative; transition: color 0.2s; font-weight: 500; }
+.top-tab:hover { color: var(--primary-blue); }
+.top-tab.active { color: var(--primary-blue); }
+.top-tab.active::after { content: ''; position: absolute; bottom: -2px; left: 0; right: 0; height: 2px; background: var(--primary-blue); }
+
+.tab-pane { display: none; }
+.tab-pane.active { display: block; }
 
 /* Filter Area */
 .filter-area { display: flex; flex-wrap: wrap; gap: 12px; align-items: flex-end; }
@@ -69,6 +74,21 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC'
 .agent-option.selected { background: #e6f7ff; color: var(--primary-blue); font-weight: 500; }
 .agent-no-data { padding: 16px 12px; text-align: center; color: #bfbfbf; font-size: 13px; }
 
+/* Org tree dropdown */
+.org-tree-wrapper { position: relative; }
+.org-tree-input { width: 200px; cursor: pointer; background: #fff; }
+.org-tree-dropdown { display: none; position: absolute; top: 100%; left: 0; width: 280px; background: #fff; border: 1px solid #d9d9d9; border-radius: 4px; box-shadow: 0 3px 12px rgba(0,0,0,0.12); z-index: 100; max-height: 300px; overflow-y: auto; margin-top: 4px; padding: 8px 0; }
+.org-tree-dropdown.show { display: block; }
+.org-node { padding: 6px 12px; cursor: pointer; font-size: 13px; transition: background 0.15s; display: flex; align-items: center; gap: 6px; }
+.org-node:hover { background: #e6f7ff; }
+.org-node.selected { background: #e6f7ff; color: var(--primary-blue); font-weight: 500; }
+.org-node-team { padding-left: 12px; font-weight: 600; color: #333; cursor: default; }
+.org-node-team:hover { background: transparent; }
+.org-node-group { padding-left: 28px; font-weight: 500; color: #666; cursor: default; }
+.org-node-group:hover { background: transparent; }
+.org-node-agent { padding-left: 44px; color: #333; }
+.org-divider { height: 1px; background: #f0f0f0; margin: 4px 0; }
+
 /* Buttons */
 .btn { padding: 7px 15px; border-radius: 4px; border: 1px solid transparent; cursor: pointer; font-size: 14px; transition: all 0.2s; display: inline-flex; align-items: center; gap: 6px; line-height: 1.5; }
 .btn-primary { background: var(--primary-blue); color: #fff; border-color: var(--primary-blue); }
@@ -87,51 +107,40 @@ table th .sort-icon.active { color: var(--primary-blue); }
 table td { padding: 12px 16px; border-bottom: 1px solid #f0f0f0; white-space: nowrap; font-size: 13px; }
 table tr:hover td { background: #f5f8fd; }
 
-/* Tags */
 .tag { display: inline-block; padding: 1px 8px; border-radius: 4px; font-size: 12px; line-height: 20px; }
 .tag-blue { background: #e6f7ff; color: #1890ff; border: 1px solid #91d5ff; }
 .tag-green { background: #f6ffed; color: #52c41a; border: 1px solid #b7eb8f; }
 .tag-orange { background: #fff7e6; color: #fa8c16; border: 1px solid #ffd591; }
-
-/* Expired tag */
 .tag-red { background: #fff2f0; color: #ff4d4f; border: 1px solid #ffccc7; }
 
-/* Section title */
 .section-title { font-size: 15px; font-weight: 600; color: #333; margin-bottom: 12px; display: flex; align-items: center; gap: 10px; }
 .section-title::before { content: ''; width: 3px; height: 16px; background: var(--primary-blue); border-radius: 2px; }
 
-/* Detail info grid */
 .info-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 8px 24px; }
 .info-row { display: flex; align-items: baseline; padding: 6px 0; font-size: 13px; }
 .info-label { color: #999; min-width: 100px; flex-shrink: 0; }
 .info-value { color: #333; word-break: break-all; }
 
-/* Clue search bar */
 .clue-search-bar { display: flex; align-items: center; gap: 12px; margin-bottom: 20px; }
 .clue-search-bar input { width: 280px; }
 
-/* Tabs for detail page */
 .detail-tabs { display: flex; border-bottom: 1px solid #e8e8e8; margin-top: 20px; margin-bottom: 16px; }
 .detail-tab { padding: 8px 16px; cursor: pointer; font-size: 14px; color: #666; position: relative; transition: color 0.2s; }
 .detail-tab:hover { color: var(--primary-blue); }
 .detail-tab.active { color: var(--primary-blue); font-weight: 500; }
 .detail-tab.active::after { content: ''; position: absolute; bottom: -1px; left: 0; right: 0; height: 2px; background: var(--primary-blue); }
 
-/* Action buttons row */
 .action-row { display: flex; justify-content: center; gap: 12px; margin-bottom: 20px; }
 .btn-action { padding: 6px 16px; border-radius: 4px; border: 1px solid var(--primary-blue); background: #fff; color: var(--primary-blue); cursor: pointer; font-size: 13px; }
 .btn-action:hover { background: #e6f7ff; }
 .btn-action.primary { background: var(--primary-blue); color: #fff; }
 
-/* Page containers */
 .page-view { display: none; }
 .page-view.active { display: block; }
 
-/* Source link */
 .source-cell { max-width: 300px; }
 .source-link { color: var(--primary-blue); text-decoration: none; word-break: break-all; white-space: nowrap; }
 .source-link:hover { text-decoration: underline; color: #40a9ff; }
-
 
 /* Pagination */
 .pagination { display: flex; justify-content: space-between; align-items: center; margin-top: 16px; font-size: 13px; color: #666; }
@@ -143,12 +152,10 @@ table tr:hover td { background: #f5f8fd; }
 .page-btn.disabled { color: #d9d9d9; cursor: not-allowed; border-color: #d9d9d9; }
 .page-size-select { padding: 4px 8px; border: 1px solid #d9d9d9; border-radius: 4px; font-size: 13px; outline: none; cursor: pointer; }
 
-/* Empty state */
 .empty-state { padding: 60px 0; text-align: center; color: #bfbfbf; }
 .empty-state .empty-icon { font-size: 48px; margin-bottom: 12px; opacity: 0.5; }
 .empty-state .empty-text { font-size: 14px; }
 
-/* Toast */
 .toast { display: none; position: fixed; top: 60px; left: 50%; transform: translateX(-50%); padding: 10px 24px; border-radius: 4px; font-size: 14px; z-index: 9999; box-shadow: 0 4px 12px rgba(0,0,0,0.15); }
 .toast.show { display: block; animation: toastIn 0.3s ease; }
 .toast-error { background: #fff2f0; color: #ff4d4f; border: 1px solid #ffccc7; }
@@ -159,7 +166,6 @@ table tr:hover td { background: #f5f8fd; }
     to { opacity: 1; transform: translateX(-50%) translateY(0); }
 }
 
-/* Responsive */
 @media (max-width: 768px) {
     .sidebar { display: none; }
     .filter-area { flex-direction: column; }
@@ -171,7 +177,6 @@ table tr:hover td { background: #f5f8fd; }
 <body>
 
 <div class="app">
-    <!-- Sidebar -->
     <div class="sidebar">
         <div class="sidebar-logo">
             <div class="icon">📞</div>
@@ -203,7 +208,6 @@ table tr:hover td { background: #f5f8fd; }
         </div>
     </div>
 
-    <!-- Main Content -->
     <div class="main">
         <div class="header">
             <div class="breadcrumb">客户管理 / <span>转介绍数据来源</span></div>
@@ -228,15 +232,12 @@ table tr:hover td { background: #f5f8fd; }
                         <button class="btn btn-primary" style="background:#52c41a;border-color:#52c41a;">获取转介绍链接</button>
                     </div>
                 </div>
-
                 <div id="clueDetail">
                     <div class="action-row">
                         <button class="btn-action primary">支付推送</button>
                         <button class="btn-action">赠送资料</button>
                         <button class="btn-action">下载转介绍海报</button>
                     </div>
-
-                    <!-- 基础信息 -->
                     <div class="card">
                         <div class="section-title">基础信息</div>
                         <div class="info-grid">
@@ -250,8 +251,6 @@ table tr:hover td { background: #f5f8fd; }
                             <div class="info-row"><span class="info-label">实验组信息</span><span class="info-value" style="color:#1890ff;cursor:pointer;">有精研班</span></div>
                         </div>
                     </div>
-
-                    <!-- 转介绍信息 - 已过期 -->
                     <div class="card" id="referralCard-expired">
                         <div class="section-title">
                             转介绍信息
@@ -266,12 +265,8 @@ table tr:hover td { background: #f5f8fd; }
                             <div class="info-row"><span class="info-label">支付状态</span><span class="info-value">支付成功</span></div>
                         </div>
                     </div>
-
-                    <!-- 转介绍信息 - 正常 -->
                     <div class="card" id="referralCard-active" style="display:none;">
-                        <div class="section-title">
-                            转介绍信息
-                        </div>
+                        <div class="section-title">转介绍信息</div>
                         <div class="info-grid">
                             <div class="info-row"><span class="info-label">推荐人洋葱ID</span><span class="info-value">20434746</span></div>
                             <div class="info-row"><span class="info-label">推荐人年级</span><span class="info-value">五年级</span></div>
@@ -281,8 +276,6 @@ table tr:hover td { background: #f5f8fd; }
                             <div class="info-row"><span class="info-label">支付状态</span><span class="info-value">支付成功</span></div>
                         </div>
                     </div>
-
-                    <!-- Tabs -->
                     <div class="detail-tabs">
                         <div class="detail-tab active">学情报告</div>
                         <div class="detail-tab">内容权限</div>
@@ -295,8 +288,6 @@ table tr:hover td { background: #f5f8fd; }
                     <div class="card" style="min-height:120px;">
                         <div style="text-align:center;color:#bfbfbf;padding:40px 0;">学情报告内容区域</div>
                     </div>
-
-                    <!-- Toggle demo -->
                     <div class="card" style="background:#f6f8fa;border:1px dashed #d9d9d9;">
                         <div style="font-size:13px;color:#666;margin-bottom:8px;">原型演示：切换转介绍绑定状态</div>
                         <div style="display:flex;gap:12px;">
@@ -310,93 +301,167 @@ table tr:hover td { background: #f5f8fd; }
 
             <!-- ==================== Page: Referral Source ==================== -->
             <div class="page-view active" id="page-referralSource">
-            <div class="page-title">转介绍数据来源</div>
+                <div class="page-title">转介绍数据来源</div>
 
-            <!-- Filter Card -->
-            <div class="card">
-                <div class="filter-area">
-                    <div class="filter-item">
-                        <label>客户手机号</label>
-                        <input type="text" class="filter-input filter-phone" id="customerPhone" placeholder="请输入客户手机号" maxlength="11" oninput="this.value=this.value.replace(/\D/g,'')">
-                    </div>
-                    <div class="filter-item">
-                        <label>新客户手机号</label>
-                        <input type="text" class="filter-input filter-phone" id="newCustomerPhone" placeholder="请输入新客户手机号" maxlength="11" oninput="this.value=this.value.replace(/\D/g,'')">
-                    </div>
-                    <div class="filter-item">
-                        <label>绑定时间（起）</label>
-                        <input type="datetime-local" class="filter-input filter-time" id="startTime" step="1">
-                    </div>
-                    <div class="filter-item">
-                        <label>绑定时间（止）</label>
-                        <input type="datetime-local" class="filter-input filter-time" id="endTime" step="1">
-                    </div>
-                    <div class="filter-item">
-                        <label>业务线</label>
-                        <select class="filter-select" id="businessLine">
-                            <option value="">全部</option>
-                            <option value="电销">电销</option>
-                            <option value="体验营">体验营</option>
-                        </select>
-                    </div>
-                    <div class="filter-item">
-                        <label>归属坐席</label>
-                        <div class="agent-search-wrapper">
-                            <input type="text" class="filter-input agent-search-input" id="agentSearch" placeholder="请输入坐席姓名搜索" autocomplete="off">
-                            <div class="agent-dropdown" id="agentDropdown"></div>
+                <!-- Tab bar -->
+                <div class="top-tabs">
+                    <div class="top-tab active" onclick="switchBizTab('telemarketing')">电销</div>
+                    <div class="top-tab" onclick="switchBizTab('experienceCamp')">体验营</div>
+                </div>
+
+                <!-- ====== 电销 Tab ====== -->
+                <div class="tab-pane active" id="tab-telemarketing">
+                    <div class="card">
+                        <div class="filter-area">
+                            <div class="filter-item">
+                                <label>客户手机号</label>
+                                <input type="text" class="filter-input filter-phone" id="tm_customerPhone" placeholder="请输入客户手机号" maxlength="11" oninput="this.value=this.value.replace(/\D/g,'')">
+                            </div>
+                            <div class="filter-item">
+                                <label>新客户手机号</label>
+                                <input type="text" class="filter-input filter-phone" id="tm_newCustomerPhone" placeholder="请输入新客户手机号" maxlength="11" oninput="this.value=this.value.replace(/\D/g,'')">
+                            </div>
+                            <div class="filter-item">
+                                <label>绑定时间（起）</label>
+                                <input type="datetime-local" class="filter-input filter-time" id="tm_startTime" step="1">
+                            </div>
+                            <div class="filter-item">
+                                <label>绑定时间（止）</label>
+                                <input type="datetime-local" class="filter-input filter-time" id="tm_endTime" step="1">
+                            </div>
+                            <div class="filter-item">
+                                <label>归属坐席</label>
+                                <div class="org-tree-wrapper">
+                                    <input type="text" class="filter-input org-tree-input" id="tm_orgAgentInput" placeholder="请选择坐席（组织架构）" readonly onclick="toggleOrgTree()">
+                                    <div class="org-tree-dropdown" id="tm_orgTreeDropdown"></div>
+                                </div>
+                            </div>
+                            <div class="filter-actions">
+                                <button class="btn btn-primary" onclick="handleSearch('telemarketing')">查询</button>
+                                <button class="btn btn-default" onclick="handleReset('telemarketing')">重置</button>
+                            </div>
                         </div>
                     </div>
-                    <div class="filter-actions">
-                        <button class="btn btn-primary" onclick="handleSearch()">查询</button>
-                        <button class="btn btn-default" onclick="handleReset()">重置</button>
+                    <div class="card" style="padding-bottom:12px;">
+                        <div class="table-wrapper">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th style="width:150px;">客户手机号</th>
+                                        <th style="width:150px;">新客户手机号</th>
+                                        <th class="sortable" style="width:180px;" onclick="toggleSort('telemarketing')">
+                                            绑定时间 <span class="sort-icon active" id="tm_sortIcon">↓</span>
+                                        </th>
+                                        <th style="width:120px;">归属坐席</th>
+                                        <th style="width:120px;">介绍人</th>
+                                        <th style="min-width:260px;">来源</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="tm_tableBody"></tbody>
+                            </table>
+                        </div>
+                        <div id="tm_emptyState" class="empty-state" style="display:none;">
+                            <div class="empty-icon">📭</div>
+                            <div class="empty-text">暂无数据</div>
+                        </div>
+                        <div class="pagination" id="tm_pagination">
+                            <div class="pagination-left">
+                                <span id="tm_totalInfo">共 0 条数据</span>
+                                <select class="page-size-select" id="tm_pageSizeSelect" onchange="changePageSize('telemarketing')">
+                                    <option value="10">10 条/页</option>
+                                    <option value="20" selected>20 条/页</option>
+                                    <option value="50">50 条/页</option>
+                                    <option value="100">100 条/页</option>
+                                </select>
+                            </div>
+                            <div class="pagination-right" id="tm_paginationBtns"></div>
+                        </div>
+                    </div>
+                    <div class="card" style="background:#f6f8fa;border:1px dashed #d9d9d9;">
+                        <div style="font-size:13px;color:#666;margin-bottom:4px;">原型演示说明</div>
+                        <div style="font-size:12px;color:#999;">电销 Tab：数据受角色权限控制（坐席/主管/团长/管理员），归属坐席筛选通过组织架构下拉选择。当前以管理员视角展示全部数据。</div>
                     </div>
                 </div>
-            </div>
 
-            <!-- Data Table Card -->
-            <div class="card" style="padding-bottom:12px;">
-                <div class="table-wrapper">
-                    <table>
-                        <thead>
-                            <tr>
-                                <th style="width:100px;">业务线</th>
-                                <th style="width:150px;">客户手机号</th>
-                                <th style="width:150px;">新客户手机号</th>
-                                <th class="sortable" style="width:180px;" onclick="toggleSort()">
-                                    绑定时间
-                                    <span class="sort-icon active" id="sortIcon">↓</span>
-                                </th>
-                                <th style="width:120px;">归属坐席</th>
-                                <th style="width:120px;">介绍人</th>
-                                <th style="min-width:260px;">来源</th>
-                            </tr>
-                        </thead>
-                        <tbody id="tableBody"></tbody>
-                    </table>
-                </div>
-                <div id="emptyState" class="empty-state" style="display:none;">
-                    <div class="empty-icon">📭</div>
-                    <div class="empty-text">暂无数据</div>
-                </div>
-                <div class="pagination" id="pagination">
-                    <div class="pagination-left">
-                        <span id="totalInfo">共 0 条数据</span>
-                        <select class="page-size-select" id="pageSizeSelect" onchange="changePageSize()">
-                            <option value="10">10 条/页</option>
-                            <option value="20" selected>20 条/页</option>
-                            <option value="50">50 条/页</option>
-                            <option value="100">100 条/页</option>
-                        </select>
+                <!-- ====== 体验营 Tab ====== -->
+                <div class="tab-pane" id="tab-experienceCamp">
+                    <div class="card">
+                        <div class="filter-area">
+                            <div class="filter-item">
+                                <label>客户手机号</label>
+                                <input type="text" class="filter-input filter-phone" id="ec_customerPhone" placeholder="请输入客户手机号" maxlength="11" oninput="this.value=this.value.replace(/\D/g,'')">
+                            </div>
+                            <div class="filter-item">
+                                <label>新客户手机号</label>
+                                <input type="text" class="filter-input filter-phone" id="ec_newCustomerPhone" placeholder="请输入新客户手机号" maxlength="11" oninput="this.value=this.value.replace(/\D/g,'')">
+                            </div>
+                            <div class="filter-item">
+                                <label>绑定时间（起）</label>
+                                <input type="datetime-local" class="filter-input filter-time" id="ec_startTime" step="1">
+                            </div>
+                            <div class="filter-item">
+                                <label>绑定时间（止）</label>
+                                <input type="datetime-local" class="filter-input filter-time" id="ec_endTime" step="1">
+                            </div>
+                            <div class="filter-item">
+                                <label>归属坐席</label>
+                                <div class="agent-search-wrapper">
+                                    <input type="text" class="filter-input agent-search-input" id="ec_agentSearch" placeholder="请输入坐席姓名搜索" autocomplete="off">
+                                    <div class="agent-dropdown" id="ec_agentDropdown"></div>
+                                </div>
+                            </div>
+                            <div class="filter-actions">
+                                <button class="btn btn-primary" onclick="handleSearch('experienceCamp')">查询</button>
+                                <button class="btn btn-default" onclick="handleReset('experienceCamp')">重置</button>
+                            </div>
+                        </div>
                     </div>
-                    <div class="pagination-right" id="paginationBtns"></div>
+                    <div class="card" style="padding-bottom:12px;">
+                        <div class="table-wrapper">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th style="width:150px;">客户手机号</th>
+                                        <th style="width:150px;">新客户手机号</th>
+                                        <th class="sortable" style="width:180px;" onclick="toggleSort('experienceCamp')">
+                                            绑定时间 <span class="sort-icon active" id="ec_sortIcon">↓</span>
+                                        </th>
+                                        <th style="width:120px;">归属坐席</th>
+                                        <th style="width:120px;">介绍人</th>
+                                        <th style="min-width:260px;">来源</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="ec_tableBody"></tbody>
+                            </table>
+                        </div>
+                        <div id="ec_emptyState" class="empty-state" style="display:none;">
+                            <div class="empty-icon">📭</div>
+                            <div class="empty-text">暂无数据</div>
+                        </div>
+                        <div class="pagination" id="ec_pagination">
+                            <div class="pagination-left">
+                                <span id="ec_totalInfo">共 0 条数据</span>
+                                <select class="page-size-select" id="ec_pageSizeSelect" onchange="changePageSize('experienceCamp')">
+                                    <option value="10">10 条/页</option>
+                                    <option value="20" selected>20 条/页</option>
+                                    <option value="50">50 条/页</option>
+                                    <option value="100">100 条/页</option>
+                                </select>
+                            </div>
+                            <div class="pagination-right" id="ec_paginationBtns"></div>
+                        </div>
+                    </div>
+                    <div class="card" style="background:#f6f8fa;border:1px dashed #d9d9d9;">
+                        <div style="font-size:13px;color:#666;margin-bottom:4px;">原型演示说明</div>
+                        <div style="font-size:12px;color:#999;">体验营 Tab：无数据权限控制，有 Tab 权限即可查看全部数据。归属坐席筛选通过文本输入模糊搜索。</div>
+                    </div>
                 </div>
-            </div>
+
             </div><!-- end page-referralSource -->
         </div>
     </div>
 </div>
 
-<!-- Toast -->
 <div class="toast" id="toast"></div>
 
 <script>
@@ -415,6 +480,33 @@ const MOCK_AGENTS = [
     { agentId: 12, agentName: '王丽丽' },
 ];
 
+const ORG_TREE = [
+    { name: '电销一团', type: 'TEAM', children: [
+        { name: '一组', type: 'GROUP', children: [
+            { agentId: 1, name: '张三', type: 'AGENT' },
+            { agentId: 2, name: '李四', type: 'AGENT' },
+            { agentId: 9, name: '张晓琳', type: 'AGENT' },
+        ]},
+        { name: '二组', type: 'GROUP', children: [
+            { agentId: 3, name: '王五', type: 'AGENT' },
+            { agentId: 4, name: '赵六', type: 'AGENT' },
+            { agentId: 10, name: '李明远', type: 'AGENT' },
+        ]},
+    ]},
+    { name: '电销二团', type: 'TEAM', children: [
+        { name: '三组', type: 'GROUP', children: [
+            { agentId: 5, name: '孙七', type: 'AGENT' },
+            { agentId: 6, name: '周八', type: 'AGENT' },
+        ]},
+        { name: '四组', type: 'GROUP', children: [
+            { agentId: 7, name: '吴九', type: 'AGENT' },
+            { agentId: 8, name: '郑十', type: 'AGENT' },
+            { agentId: 11, name: '张伟', type: 'AGENT' },
+            { agentId: 12, name: '王丽丽', type: 'AGENT' },
+        ]},
+    ]},
+];
+
 const FOLLOW_ID_MAP = {
     'F10001': '张三', 'F10002': '李四', 'F10003': '王五', 'F10004': '赵六',
     'F10005': '孙七', 'F10006': '周八', 'F10007': '吴九', 'F10008': '郑十',
@@ -422,9 +514,10 @@ const FOLLOW_ID_MAP = {
 };
 const FOLLOW_IDS = Object.keys(FOLLOW_ID_MAP);
 
-const MOCK_DATA = [];
+const MOCK_DATA_TM = [];
+const MOCK_DATA_EC = [];
+
 (function generateMockData() {
-    const bizLines = ['电销', '体验营'];
     const urlPatterns = [
         'https://m.yangcong345.com/referral/poster?campaign=spring2026&followID=',
         'https://m.yangcong345.com/referral/miniapp?channel=share&followID=',
@@ -434,41 +527,46 @@ const MOCK_DATA = [];
         'https://m.yangcong345.com/wxapp/pages/share/invite?from=miniprogram&followID=',
         'https://m.yangcong345.com/activity/recommend?poster=winter_sale&followID=',
         'https://m.yangcong345.com/referral/h5?channel=wechat_moments&followID=',
-        'https://m.yangcong345.com/wxapp/pages/referral/scan?qr=abc123&followID=',
-        'https://m.yangcong345.com/referral/poster?campaign=new_year&source=pyq&followID='
     ];
-    const phones = [];
-    for (let i = 0; i < 86; i++) {
-        const p = '1' + (Math.floor(Math.random() * 9) + 1) + String(Math.floor(Math.random() * 100000000)).padStart(9, '0');
-        phones.push(p.slice(0, 11));
+    function genPhone() {
+        return '1' + (Math.floor(Math.random() * 9) + 1) + String(Math.floor(Math.random() * 100000000)).padStart(9, '0').slice(0, 9);
     }
-    for (let i = 0; i < 86; i++) {
+    function genRow() {
         const d = new Date(2026, 0, 1 + Math.floor(Math.random() * 82), Math.floor(Math.random() * 24), Math.floor(Math.random() * 60), Math.floor(Math.random() * 60));
         const urlBase = urlPatterns[Math.floor(Math.random() * urlPatterns.length)];
         const followId = FOLLOW_IDS[Math.floor(Math.random() * FOLLOW_IDS.length)];
-        MOCK_DATA.push({
-            businessLine: bizLines[Math.floor(Math.random() * bizLines.length)],
-            customerPhone: phones[i],
-            newCustomerPhone: phones[(i + 30) % phones.length],
+        return {
+            customerPhone: genPhone(),
+            newCustomerPhone: genPhone(),
             bindTime: formatDate(d),
             agentName: MOCK_AGENTS[Math.floor(Math.random() * MOCK_AGENTS.length)].agentName,
             followId: followId,
             referrerName: FOLLOW_ID_MAP[followId],
             sourceUrl: urlBase + followId,
             _ts: d.getTime()
-        });
+        };
     }
-    MOCK_DATA.sort((a, b) => b._ts - a._ts);
+    for (let i = 0; i < 56; i++) MOCK_DATA_TM.push(genRow());
+    for (let i = 0; i < 42; i++) MOCK_DATA_EC.push(genRow());
+    MOCK_DATA_TM.sort((a, b) => b._ts - a._ts);
+    MOCK_DATA_EC.sort((a, b) => b._ts - a._ts);
 })();
 
-let state = {
-    pageNum: 1,
-    pageSize: 20,
-    sortOrder: 'desc',
-    selectedAgentId: null,
-    selectedAgentName: '',
-    filteredData: [...MOCK_DATA]
+const tabState = {
+    telemarketing: {
+        pageNum: 1, pageSize: 20, sortOrder: 'desc',
+        selectedAgentId: null, selectedAgentName: '',
+        filteredData: [...MOCK_DATA_TM], allData: MOCK_DATA_TM,
+        prefix: 'tm'
+    },
+    experienceCamp: {
+        pageNum: 1, pageSize: 20, sortOrder: 'desc',
+        selectedAgentId: null, selectedAgentName: '',
+        filteredData: [...MOCK_DATA_EC], allData: MOCK_DATA_EC,
+        prefix: 'ec'
+    }
 };
+let activeTab = 'telemarketing';
 
 function formatDate(d) {
     const pad = n => String(n).padStart(2, '0');
@@ -482,90 +580,94 @@ function showToast(msg, type) {
     setTimeout(() => { toast.className = 'toast'; }, 2500);
 }
 
-function handleSearch() {
-    const customerPhone = document.getElementById('customerPhone').value.trim();
-    const newCustomerPhone = document.getElementById('newCustomerPhone').value.trim();
-    const startTime = document.getElementById('startTime').value;
-    const endTime = document.getElementById('endTime').value;
-    const businessLine = document.getElementById('businessLine').value;
+function switchBizTab(tab) {
+    activeTab = tab;
+    document.querySelectorAll('.top-tab').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('.tab-pane').forEach(p => p.classList.remove('active'));
+    if (tab === 'telemarketing') {
+        document.querySelectorAll('.top-tab')[0].classList.add('active');
+        document.getElementById('tab-telemarketing').classList.add('active');
+    } else {
+        document.querySelectorAll('.top-tab')[1].classList.add('active');
+        document.getElementById('tab-experienceCamp').classList.add('active');
+    }
+    renderTable(tab);
+}
+
+function handleSearch(tab) {
+    const s = tabState[tab];
+    const p = s.prefix;
+    const customerPhone = document.getElementById(p + '_customerPhone').value.trim();
+    const newCustomerPhone = document.getElementById(p + '_newCustomerPhone').value.trim();
+    const startTime = document.getElementById(p + '_startTime').value;
+    const endTime = document.getElementById(p + '_endTime').value;
 
     if (startTime && endTime && new Date(startTime) > new Date(endTime)) {
         showToast('结束时间不能早于开始时间', 'error');
         return;
     }
 
-    let data = [...MOCK_DATA];
+    let data = [...s.allData];
+    if (customerPhone) data = data.filter(d => d.customerPhone === customerPhone);
+    if (newCustomerPhone) data = data.filter(d => d.newCustomerPhone === newCustomerPhone);
+    if (startTime) { const st = new Date(startTime).getTime(); data = data.filter(d => d._ts >= st); }
+    if (endTime) { const et = new Date(endTime).getTime(); data = data.filter(d => d._ts <= et); }
+    if (s.selectedAgentName) data = data.filter(d => d.agentName === s.selectedAgentName);
 
-    if (customerPhone) {
-        data = data.filter(d => d.customerPhone === customerPhone);
-    }
-    if (newCustomerPhone) {
-        data = data.filter(d => d.newCustomerPhone === newCustomerPhone);
-    }
-    if (startTime) {
-        const st = new Date(startTime).getTime();
-        data = data.filter(d => d._ts >= st);
-    }
-    if (endTime) {
-        const et = new Date(endTime).getTime();
-        data = data.filter(d => d._ts <= et);
-    }
-    if (businessLine) {
-        data = data.filter(d => d.businessLine === businessLine);
-    }
-    if (state.selectedAgentName) {
-        data = data.filter(d => d.agentName === state.selectedAgentName);
-    }
-    if (state.sortOrder === 'asc') {
-        data.sort((a, b) => a._ts - b._ts);
-    } else {
-        data.sort((a, b) => b._ts - a._ts);
-    }
+    if (s.sortOrder === 'asc') data.sort((a, b) => a._ts - b._ts);
+    else data.sort((a, b) => b._ts - a._ts);
 
-    state.filteredData = data;
-    state.pageNum = 1;
-    renderTable();
+    s.filteredData = data;
+    s.pageNum = 1;
+    renderTable(tab);
 }
 
-function handleReset() {
-    document.getElementById('customerPhone').value = '';
-    document.getElementById('newCustomerPhone').value = '';
-    document.getElementById('startTime').value = '';
-    document.getElementById('endTime').value = '';
-    document.getElementById('businessLine').value = '';
-    document.getElementById('agentSearch').value = '';
-    state.selectedAgentId = null;
-    state.selectedAgentName = '';
-    state.sortOrder = 'desc';
-    document.getElementById('sortIcon').textContent = '↓';
-    state.filteredData = [...MOCK_DATA];
-    state.filteredData.sort((a, b) => b._ts - a._ts);
-    state.pageNum = 1;
-    renderTable();
+function handleReset(tab) {
+    const s = tabState[tab];
+    const p = s.prefix;
+    document.getElementById(p + '_customerPhone').value = '';
+    document.getElementById(p + '_newCustomerPhone').value = '';
+    document.getElementById(p + '_startTime').value = '';
+    document.getElementById(p + '_endTime').value = '';
+
+    if (tab === 'telemarketing') {
+        document.getElementById('tm_orgAgentInput').value = '';
+    } else {
+        document.getElementById('ec_agentSearch').value = '';
+    }
+
+    s.selectedAgentId = null;
+    s.selectedAgentName = '';
+    s.sortOrder = 'desc';
+    document.getElementById(p + '_sortIcon').textContent = '↓';
+    s.filteredData = [...s.allData];
+    s.filteredData.sort((a, b) => b._ts - a._ts);
+    s.pageNum = 1;
+    renderTable(tab);
     showToast('已重置筛选条件', 'success');
 }
 
-function toggleSort() {
-    state.sortOrder = state.sortOrder === 'desc' ? 'asc' : 'desc';
-    const icon = document.getElementById('sortIcon');
-    icon.textContent = state.sortOrder === 'desc' ? '↓' : '↑';
-    if (state.sortOrder === 'asc') {
-        state.filteredData.sort((a, b) => a._ts - b._ts);
-    } else {
-        state.filteredData.sort((a, b) => b._ts - a._ts);
-    }
-    state.pageNum = 1;
-    renderTable();
+function toggleSort(tab) {
+    const s = tabState[tab];
+    s.sortOrder = s.sortOrder === 'desc' ? 'asc' : 'desc';
+    const icon = document.getElementById(s.prefix + '_sortIcon');
+    icon.textContent = s.sortOrder === 'desc' ? '↓' : '↑';
+    if (s.sortOrder === 'asc') s.filteredData.sort((a, b) => a._ts - b._ts);
+    else s.filteredData.sort((a, b) => b._ts - a._ts);
+    s.pageNum = 1;
+    renderTable(tab);
 }
 
-function renderTable() {
-    const tbody = document.getElementById('tableBody');
-    const emptyState = document.getElementById('emptyState');
-    const pagination = document.getElementById('pagination');
-    const data = state.filteredData;
+function renderTable(tab) {
+    const s = tabState[tab];
+    const p = s.prefix;
+    const tbody = document.getElementById(p + '_tableBody');
+    const emptyState = document.getElementById(p + '_emptyState');
+    const pagination = document.getElementById(p + '_pagination');
+    const data = s.filteredData;
     const total = data.length;
-    const start = (state.pageNum - 1) * state.pageSize;
-    const end = Math.min(start + state.pageSize, total);
+    const start = (s.pageNum - 1) * s.pageSize;
+    const end = Math.min(start + s.pageSize, total);
     const pageData = data.slice(start, end);
 
     if (total === 0) {
@@ -580,118 +682,154 @@ function renderTable() {
 
     let html = '';
     pageData.forEach(row => {
-        const bizTag = row.businessLine === '电销'
-            ? '<span class="tag tag-orange">电销</span>'
-            : '<span class="tag tag-blue">体验营</span>';
         const truncUrl = row.sourceUrl.length > 40 ? row.sourceUrl.slice(0, 40) + '...' : row.sourceUrl;
-        html += `<tr>
-            <td>${bizTag}</td>
-            <td>${row.customerPhone}</td>
-            <td>${row.newCustomerPhone}</td>
-            <td>${row.bindTime}</td>
-            <td>${row.agentName}</td>
-            <td>${row.referrerName || '—'}</td>
-            <td class="source-cell"><a href="${row.sourceUrl}" target="_blank" class="source-link" title="${row.sourceUrl}">${truncUrl}</a></td>
-        </tr>`;
+        html += '<tr>' +
+            '<td>' + row.customerPhone + '</td>' +
+            '<td>' + row.newCustomerPhone + '</td>' +
+            '<td>' + row.bindTime + '</td>' +
+            '<td>' + row.agentName + '</td>' +
+            '<td>' + (row.referrerName || '—') + '</td>' +
+            '<td class="source-cell"><a href="' + row.sourceUrl + '" target="_blank" class="source-link" title="' + row.sourceUrl + '">' + truncUrl + '</a></td>' +
+            '</tr>';
     });
     tbody.innerHTML = html;
 
-    document.getElementById('totalInfo').textContent = '共 ' + total + ' 条数据';
-    renderPagination(total);
+    document.getElementById(p + '_totalInfo').textContent = '共 ' + total + ' 条数据';
+    renderPagination(tab, total);
 }
 
-function renderPagination(total) {
-    const totalPages = Math.ceil(total / state.pageSize) || 1;
-    const container = document.getElementById('paginationBtns');
+function renderPagination(tab, total) {
+    const s = tabState[tab];
+    const totalPages = Math.ceil(total / s.pageSize) || 1;
+    const container = document.getElementById(s.prefix + '_paginationBtns');
     let html = '';
 
-    html += `<div class="page-btn ${state.pageNum <= 1 ? 'disabled' : ''}" onclick="${state.pageNum > 1 ? 'goPage(' + (state.pageNum - 1) + ')' : ''}">‹</div>`;
+    html += '<div class="page-btn ' + (s.pageNum <= 1 ? 'disabled' : '') + '" onclick="' + (s.pageNum > 1 ? "goPage('" + tab + "'," + (s.pageNum - 1) + ')' : '') + '">‹</div>';
 
     const maxVisible = 5;
-    let startPage = Math.max(1, state.pageNum - Math.floor(maxVisible / 2));
+    let startPage = Math.max(1, s.pageNum - Math.floor(maxVisible / 2));
     let endPage = Math.min(totalPages, startPage + maxVisible - 1);
-    if (endPage - startPage < maxVisible - 1) {
-        startPage = Math.max(1, endPage - maxVisible + 1);
-    }
+    if (endPage - startPage < maxVisible - 1) startPage = Math.max(1, endPage - maxVisible + 1);
 
     if (startPage > 1) {
-        html += `<div class="page-btn" onclick="goPage(1)">1</div>`;
-        if (startPage > 2) html += `<span style="padding:0 4px;color:#bfbfbf;">...</span>`;
+        html += '<div class="page-btn" onclick="goPage(\'' + tab + '\',1)">1</div>';
+        if (startPage > 2) html += '<span style="padding:0 4px;color:#bfbfbf;">...</span>';
     }
-
     for (let i = startPage; i <= endPage; i++) {
-        html += `<div class="page-btn ${i === state.pageNum ? 'active' : ''}" onclick="goPage(${i})">${i}</div>`;
+        html += '<div class="page-btn ' + (i === s.pageNum ? 'active' : '') + '" onclick="goPage(\'' + tab + '\',' + i + ')">' + i + '</div>';
     }
-
     if (endPage < totalPages) {
-        if (endPage < totalPages - 1) html += `<span style="padding:0 4px;color:#bfbfbf;">...</span>`;
-        html += `<div class="page-btn" onclick="goPage(${totalPages})">${totalPages}</div>`;
+        if (endPage < totalPages - 1) html += '<span style="padding:0 4px;color:#bfbfbf;">...</span>';
+        html += '<div class="page-btn" onclick="goPage(\'' + tab + '\',' + totalPages + ')">' + totalPages + '</div>';
     }
 
-    html += `<div class="page-btn ${state.pageNum >= totalPages ? 'disabled' : ''}" onclick="${state.pageNum < totalPages ? 'goPage(' + (state.pageNum + 1) + ')' : ''}">›</div>`;
+    html += '<div class="page-btn ' + (s.pageNum >= totalPages ? 'disabled' : '') + '" onclick="' + (s.pageNum < totalPages ? "goPage('" + tab + "'," + (s.pageNum + 1) + ')' : '') + '">›</div>';
 
     container.innerHTML = html;
 }
 
-function goPage(n) {
-    state.pageNum = n;
-    renderTable();
+function goPage(tab, n) {
+    tabState[tab].pageNum = n;
+    renderTable(tab);
 }
 
-function changePageSize() {
-    state.pageSize = parseInt(document.getElementById('pageSizeSelect').value);
-    state.pageNum = 1;
-    renderTable();
+function changePageSize(tab) {
+    const s = tabState[tab];
+    s.pageSize = parseInt(document.getElementById(s.prefix + '_pageSizeSelect').value);
+    s.pageNum = 1;
+    renderTable(tab);
 }
 
-// Agent fuzzy search
-let agentSearchTimer = null;
-const agentInput = document.getElementById('agentSearch');
-const agentDropdown = document.getElementById('agentDropdown');
+// ===================== Org tree dropdown (电销 Tab) =====================
+let orgTreeOpen = false;
 
-agentInput.addEventListener('input', function() {
-    clearTimeout(agentSearchTimer);
+function toggleOrgTree() {
+    const dropdown = document.getElementById('tm_orgTreeDropdown');
+    orgTreeOpen = !orgTreeOpen;
+    if (orgTreeOpen) {
+        renderOrgTree();
+        dropdown.classList.add('show');
+    } else {
+        dropdown.classList.remove('show');
+    }
+}
+
+function renderOrgTree() {
+    const dropdown = document.getElementById('tm_orgTreeDropdown');
+    let html = '<div class="org-node org-node-agent" data-id="" onclick="selectOrgAgent(null,\'\')" style="padding-left:12px;color:#999;">全部坐席（不筛选）</div><div class="org-divider"></div>';
+    ORG_TREE.forEach(team => {
+        html += '<div class="org-node org-node-team">📁 ' + team.name + '</div>';
+        team.children.forEach(group => {
+            html += '<div class="org-node org-node-group">📂 ' + group.name + '</div>';
+            group.children.forEach(agent => {
+                const sel = tabState.telemarketing.selectedAgentId === agent.agentId ? ' selected' : '';
+                html += '<div class="org-node org-node-agent' + sel + '" data-id="' + agent.agentId + '" onclick="selectOrgAgent(' + agent.agentId + ',\'' + agent.name + '\')">👤 ' + agent.name + '</div>';
+            });
+        });
+        html += '<div class="org-divider"></div>';
+    });
+    dropdown.innerHTML = html;
+}
+
+function selectOrgAgent(id, name) {
+    tabState.telemarketing.selectedAgentId = id;
+    tabState.telemarketing.selectedAgentName = name;
+    document.getElementById('tm_orgAgentInput').value = name;
+    document.getElementById('tm_orgTreeDropdown').classList.remove('show');
+    orgTreeOpen = false;
+}
+
+document.addEventListener('click', function(e) {
+    if (!e.target.closest('.org-tree-wrapper')) {
+        document.getElementById('tm_orgTreeDropdown').classList.remove('show');
+        orgTreeOpen = false;
+    }
+    if (!e.target.closest('.agent-search-wrapper')) {
+        document.getElementById('ec_agentDropdown').classList.remove('show');
+    }
+});
+
+// ===================== Agent fuzzy search (体验营 Tab) =====================
+let ecAgentSearchTimer = null;
+const ecAgentInput = document.getElementById('ec_agentSearch');
+const ecAgentDropdown = document.getElementById('ec_agentDropdown');
+
+ecAgentInput.addEventListener('input', function() {
+    clearTimeout(ecAgentSearchTimer);
     const keyword = this.value.trim();
-    state.selectedAgentId = null;
-    state.selectedAgentName = '';
+    tabState.experienceCamp.selectedAgentId = null;
+    tabState.experienceCamp.selectedAgentName = '';
 
     if (keyword.length < 2) {
-        agentDropdown.classList.remove('show');
+        ecAgentDropdown.classList.remove('show');
         return;
     }
 
-    agentSearchTimer = setTimeout(() => {
+    ecAgentSearchTimer = setTimeout(() => {
         const results = MOCK_AGENTS.filter(a => a.agentName.includes(keyword));
         if (results.length === 0) {
-            agentDropdown.innerHTML = '<div class="agent-no-data">未找到匹配的坐席</div>';
+            ecAgentDropdown.innerHTML = '<div class="agent-no-data">未找到匹配的坐席</div>';
         } else {
-            agentDropdown.innerHTML = results.map(a =>
-                `<div class="agent-option" data-id="${a.agentId}" data-name="${a.agentName}" onclick="selectAgent(${a.agentId}, '${a.agentName}')">${a.agentName}</div>`
+            ecAgentDropdown.innerHTML = results.map(a =>
+                '<div class="agent-option" onclick="selectEcAgent(' + a.agentId + ',\'' + a.agentName + '\')">' + a.agentName + '</div>'
             ).join('');
         }
-        agentDropdown.classList.add('show');
+        ecAgentDropdown.classList.add('show');
     }, 300);
 });
 
-agentInput.addEventListener('focus', function() {
-    if (this.value.trim().length >= 2) {
-        agentDropdown.classList.add('show');
-    }
+ecAgentInput.addEventListener('focus', function() {
+    if (this.value.trim().length >= 2) ecAgentDropdown.classList.add('show');
 });
 
-document.addEventListener('click', function(e) {
-    if (!e.target.closest('.agent-search-wrapper')) {
-        agentDropdown.classList.remove('show');
-    }
-});
-
-function selectAgent(id, name) {
-    state.selectedAgentId = id;
-    state.selectedAgentName = name;
-    agentInput.value = name;
-    agentDropdown.classList.remove('show');
+function selectEcAgent(id, name) {
+    tabState.experienceCamp.selectedAgentId = id;
+    tabState.experienceCamp.selectedAgentName = name;
+    ecAgentInput.value = name;
+    ecAgentDropdown.classList.remove('show');
 }
 
+// ===================== Navigation =====================
 function navigateTo(page) {
     document.querySelectorAll('.menu-item').forEach(m => m.classList.remove('active'));
     document.querySelectorAll('.page-view').forEach(p => p.classList.remove('active'));
@@ -726,27 +864,16 @@ function navigateTo(page) {
 function toggleReferralStatus(status) {
     const expired = document.getElementById('referralCard-expired');
     const active = document.getElementById('referralCard-active');
-    if (status === 'expired') {
-        expired.style.display = 'block';
-        active.style.display = 'none';
-    } else if (status === 'active') {
-        expired.style.display = 'none';
-        active.style.display = 'block';
-    } else {
-        expired.style.display = 'none';
-        active.style.display = 'none';
-    }
+    if (status === 'expired') { expired.style.display = 'block'; active.style.display = 'none'; }
+    else if (status === 'active') { expired.style.display = 'none'; active.style.display = 'block'; }
+    else { expired.style.display = 'none'; active.style.display = 'none'; }
 }
 
-function searchClue() {
-    showToast('查询成功，展示线索详情', 'success');
-}
+function searchClue() { showToast('查询成功，展示线索详情', 'success'); }
+function resetClue() { document.getElementById('clueIdInput').value = ''; }
 
-function resetClue() {
-    document.getElementById('clueIdInput').value = '';
-}
-
-renderTable();
+renderTable('telemarketing');
+renderTable('experienceCamp');
 </script>
 
 </body>
